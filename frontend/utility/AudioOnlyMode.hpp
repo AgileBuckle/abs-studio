@@ -17,9 +17,13 @@
 
 #pragma once
 
-#include <cstring>
+#ifdef AUDIO_ONLY_MODE_TEST
+/* Test builds supply OBS_SOURCE_* macros before including this header. */
+#else
+#include <obs.h>
+#endif
 
-/* Requires OBS_SOURCE_* flags from <obs.h> (or equivalent) before inclusion. */
+#include <cstring>
 
 /* Product is an audio processing app: hide video UI, leave libobs video plumbing. */
 constexpr bool kAudioOnlyApp = true;

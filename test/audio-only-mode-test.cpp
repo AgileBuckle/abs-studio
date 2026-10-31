@@ -7,6 +7,7 @@
 #define OBS_SOURCE_AUDIO (1u << 1)
 #define OBS_SOURCE_ASYNC (1u << 2)
 #define OBS_SOURCE_ASYNC_VIDEO (OBS_SOURCE_ASYNC | OBS_SOURCE_VIDEO)
+#define AUDIO_ONLY_MODE_TEST 1
 
 #include "../frontend/utility/AudioOnlyMode.hpp"
 
