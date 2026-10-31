@@ -20,6 +20,7 @@
 #include "OBSBasic.hpp"
 #include "OBSProjector.hpp"
 
+#include <utility/AudioOnlyMode.hpp>
 #include <utility/display-helpers.hpp>
 #include <utility/QuickTransition.hpp>
 
@@ -178,11 +179,19 @@ void OBSBasic::CreateProgramOptions()
 
 void OBSBasic::TogglePreviewProgramMode()
 {
+	if (kAudioOnlyApp) {
+		return;
+	}
+
 	SetPreviewProgramMode(!IsPreviewProgramMode());
 }
 
 void OBSBasic::SetPreviewProgramMode(bool enabled)
 {
+	if (kAudioOnlyApp) {
+		enabled = false;
+	}
+
 	if (IsPreviewProgramMode() == enabled) {
 		return;
 	}

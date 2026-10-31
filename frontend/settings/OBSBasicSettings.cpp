@@ -27,6 +27,7 @@
 #ifdef YOUTUBE_ENABLED
 #include <docks/YouTubeAppDock.hpp>
 #endif
+#include <utility/AudioOnlyMode.hpp>
 #include <utility/audio-encoders.hpp>
 #include <utility/BaseLexer.hpp>
 #include <utility/FFmpegCodec.hpp>
@@ -352,6 +353,35 @@ OBSBasicSettings::OBSBasicSettings(QWidget *parent)
 	main->EnableOutputs(false);
 
 	ui->listWidget->setAttribute(Qt::WA_MacShowFocusRect, false);
+
+	if (kAudioOnlyApp) {
+		/* Hide video settings and video-encoder UI; keep defaults for the pipeline. */
+		if (auto *videoItem = ui->listWidget->item(Pages::VIDEO)) {
+			videoItem->setHidden(true);
+		}
+		ui->videoPage->setVisible(false);
+
+		ui->simpleOutStrEncoderLabel->setVisible(false);
+		ui->simpleOutStrEncoder->setVisible(false);
+		ui->simpleOutPresetLabel->setVisible(false);
+		ui->simpleOutPreset->setVisible(false);
+		ui->simpleOutRecEncoderLabel->setVisible(false);
+		ui->simpleOutRecEncoder->setVisible(false);
+
+		ui->advOutEncLabel->setVisible(false);
+		ui->advOutEncoder->setVisible(false);
+		ui->advOutEncoderProps->setVisible(false);
+		ui->advOutUseRescale->setVisible(false);
+		ui->advOutRecEncLabel->setVisible(false);
+		ui->advOutRecEncoder->setVisible(false);
+		ui->advOutRecEncoderProps->setVisible(false);
+		ui->advOutRecUseRescale->setVisible(false);
+
+		ui->groupBox_18->setVisible(false); /* Preview */
+		ui->groupBox_11->setVisible(false); /* Studio Mode */
+		ui->groupBoxMultiview->setVisible(false);
+		ui->enableMultitrackVideo->setVisible(false);
+	}
 
 	/* clang-format off */
 	HookWidget(ui->language,             COMBO_CHANGED,  GENERAL_CHANGED);

@@ -39,6 +39,7 @@
 #include <dialogs/OBSBasicTransform.hpp>
 #include <models/SceneCollection.hpp>
 #include <settings/OBSBasicSettings.hpp>
+#include <utility/AudioOnlyMode.hpp>
 #include <utility/QuickTransition.hpp>
 #include <utility/SceneRenameDelegate.hpp>
 #include <utility/ScreenshotObj.hpp>
@@ -246,6 +247,22 @@ OBSBasic::OBSBasic(QWidget *parent) : OBSMainWindow(parent), undo_s(ui), ui(new 
 	resizeDocks({ui->scenesDock, ui->sourcesDock}, {sideDockWidth, sideDockWidth}, Qt::Horizontal);
 	addDockWidget(Qt::BottomDockWidgetArea, controlsDock);
 
+	if (kAudioOnlyApp) {
+		/* Audio app: hide canvas/preview and transitions; mixer is primary surface. */
+		ui->canvasEditor->setVisible(false);
+		ui->transitionsDock->setVisible(false);
+		ui->actionPreview->setVisible(false);
+		ui->actionPreviewZoomIn->setVisible(false);
+		ui->actionPreviewZoomOut->setVisible(false);
+		ui->actionPreviewResetZoom->setVisible(false);
+		ui->actionLockPreview->setVisible(false);
+		ui->multiviewProjectorMenu->menuAction()->setVisible(false);
+		ui->autoConfigure->setVisible(false);
+		addDockWidget(Qt::RightDockWidgetArea, ui->mixerDock);
+		int mixerWidth = std::min(width() * 45 / 100, 480);
+		resizeDocks({ui->mixerDock}, {mixerWidth}, Qt::Horizontal);
+	}
+
 	startingDockLayout = saveState();
 
 	statsDock = new OBSDock();
@@ -415,7 +432,12 @@ OBSBasic::OBSBasic(QWidget *parent) : OBSMainWindow(parent), undo_s(ui), ui(new 
 	SETUP_DOCK(ui->scenesDock);
 	SETUP_DOCK(ui->sourcesDock);
 	SETUP_DOCK(ui->mixerDock);
-	SETUP_DOCK(ui->transitionsDock);
+	if (!kAudioOnlyApp) {
+		SETUP_DOCK(ui->transitionsDock);
+	} else {
+		setupDockAction(ui->transitionsDock);
+		ui->transitionsDock->setVisible(false);
+	}
 	SETUP_DOCK(controlsDock);
 	SETUP_DOCK(statsDock);
 #undef SETUP_DOCK
@@ -933,7 +955,7 @@ void OBSBasic::OBSInit()
 	cef_js_avail = cef && obs_browser_qcef_version() >= 3;
 #endif
 
-	vcamEnabled = (obs_get_output_flags(VIRTUAL_CAM_ID) & OBS_OUTPUT_VIDEO) != 0;
+	vcamEnabled = !kAudioOnlyApp && (obs_get_output_flags(VIRTUAL_CAM_ID) & OBS_OUTPUT_VIDEO) != 0;
 	if (vcamEnabled) {
 		emit VirtualCamEnabled();
 	}
@@ -1019,7 +1041,10 @@ void OBSBasic::OBSInit()
 
 	previewEnabled = config_get_bool(App()->GetUserConfig(), "BasicWindow", "PreviewEnabled");
 
-	if (!previewEnabled && !IsPreviewProgramMode()) {
+	if (kAudioOnlyApp) {
+		previewEnabled = false;
+		ui->canvasEditor->setVisible(false);
+	} else if (!previewEnabled && !IsPreviewProgramMode()) {
 		QMetaObject::invokeMethod(this, &OBSBasic::EnablePreviewDisplay, Qt::QueuedConnection, previewEnabled);
 	} else if (!previewEnabled && IsPreviewProgramMode()) {
 		QMetaObject::invokeMethod(this, &OBSBasic::EnablePreviewDisplay, Qt::QueuedConnection, true);

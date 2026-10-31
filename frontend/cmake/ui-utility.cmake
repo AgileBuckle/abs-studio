@@ -66,6 +66,7 @@ target_sources(
     utility/ThumbnailView.cpp
     utility/ThumbnailView.hpp
     utility/VCamConfig.hpp
+    utility/AudioOnlyMode.hpp
     utility/audio-encoders.cpp
     utility/audio-encoders.hpp
     utility/display-helpers.hpp

@@ -20,6 +20,7 @@
 #include <components/VisibilityItemDelegate.hpp>
 #include <components/VisibilityItemWidget.hpp>
 #include <dialogs/NameDialog.hpp>
+#include <utility/AudioOnlyMode.hpp>
 #include <utility/display-helpers.hpp>
 #include <utility/item-widget-helpers.hpp>
 #include <widgets/OBSBasic.hpp>
@@ -494,6 +495,10 @@ QMenu *OBSBasicFilters::CreateAddFilterPopupMenu(bool async)
 	QMenu *popup = new QMenu(QTStr("Add"), this);
 	for (FilterInfo &type : types) {
 		uint32_t filterFlags = obs_get_source_output_flags(type.type.c_str());
+
+		if (!AudioOnlyFilterTypeAllowed(filterFlags)) {
+			continue;
+		}
 
 		if (!filter_compatible(async, sourceFlags, filterFlags)) {
 			continue;

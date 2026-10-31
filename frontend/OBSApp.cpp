@@ -379,7 +379,7 @@ void OBSApp::InitUserConfigDefaults()
 
 	config_set_default_string(userConfig, "General", "HotkeyFocusType", "NeverDisableHotkeys");
 
-	config_set_default_bool(userConfig, "BasicWindow", "PreviewEnabled", true);
+	config_set_default_bool(userConfig, "BasicWindow", "PreviewEnabled", false);
 	config_set_default_bool(userConfig, "BasicWindow", "PreviewProgramMode", false);
 	config_set_default_bool(userConfig, "BasicWindow", "SceneDuplicationMode", true);
 	config_set_default_bool(userConfig, "BasicWindow", "SwapScenesMode", true);
@@ -394,7 +394,7 @@ void OBSApp::InitUserConfigDefaults()
 	config_set_default_bool(userConfig, "BasicWindow", "SysTrayEnabled", true);
 	config_set_default_bool(userConfig, "BasicWindow", "SysTrayWhenStarted", false);
 	config_set_default_bool(userConfig, "BasicWindow", "SaveProjectors", false);
-	config_set_default_bool(userConfig, "BasicWindow", "ShowTransitions", true);
+	config_set_default_bool(userConfig, "BasicWindow", "ShowTransitions", false);
 	config_set_default_bool(userConfig, "BasicWindow", "ShowListboxToolbars", true);
 	config_set_default_bool(userConfig, "BasicWindow", "ShowStatusBar", true);
 	config_set_default_bool(userConfig, "BasicWindow", "ShowSourceIcons", true);

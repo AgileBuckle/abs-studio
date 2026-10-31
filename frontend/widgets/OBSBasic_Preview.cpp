@@ -19,6 +19,7 @@
 
 #include "OBSBasic.hpp"
 
+#include <utility/AudioOnlyMode.hpp>
 #include <utility/display-helpers.hpp>
 #include <widgets/OBSProjector.hpp>
 
@@ -264,6 +265,13 @@ void OBSBasic::on_previewDisabledWidget_customContextMenuRequested()
 
 void OBSBasic::EnablePreviewDisplay(bool enable)
 {
+	if (kAudioOnlyApp) {
+		previewEnabled = false;
+		ui->canvasEditor->setVisible(false);
+		obs_display_set_enabled(ui->preview->GetDisplay(), false);
+		return;
+	}
+
 	obs_display_set_enabled(ui->preview->GetDisplay(), enable);
 	ui->previewContainer->setVisible(enable);
 	ui->previewDisabledWidget->setVisible(!enable);
@@ -271,6 +279,10 @@ void OBSBasic::EnablePreviewDisplay(bool enable)
 
 void OBSBasic::TogglePreview()
 {
+	if (kAudioOnlyApp) {
+		return;
+	}
+
 	previewEnabled = !previewEnabled;
 	EnablePreviewDisplay(previewEnabled);
 }
@@ -282,7 +294,7 @@ void OBSBasic::addSnapGuide(SnapGuide guide)
 
 void OBSBasic::EnablePreview()
 {
-	if (previewProgramMode) {
+	if (kAudioOnlyApp || previewProgramMode) {
 		return;
 	}
 
