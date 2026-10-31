@@ -2,6 +2,8 @@
 #include "OBSBasic.hpp"
 #include "qt-wrappers.hpp"
 
+#include <utility/AudioOnlyMode.hpp>
+
 #include "moc_OBSBasicControls.cpp"
 
 OBSBasicControls::OBSBasicControls(OBSBasic *main) : QFrame(nullptr), ui(new Ui::OBSBasicControls)
@@ -64,6 +66,10 @@ OBSBasicControls::OBSBasicControls(OBSBasic *main) : QFrame(nullptr), ui(new Ui:
 	ui->saveReplayButton->setVisible(false);
 	ui->virtualCamButton->setVisible(false);
 	ui->virtualCamConfigButton->setVisible(false);
+
+	if (kAudioOnlyApp) {
+		ui->modeSwitch->setVisible(false);
+	}
 
 	/* Set up state update connections */
 	connect(main, &OBSBasic::StreamingPreparing, this, &OBSBasicControls::StreamingPreparing);
@@ -280,6 +286,10 @@ void OBSBasicControls::EnableReplayBufferButtons(bool enabled)
 
 void OBSBasicControls::EnableVirtualCamButtons()
 {
+	if (kAudioOnlyApp) {
+		return;
+	}
+
 	ui->virtualCamButton->setVisible(true);
 	ui->virtualCamConfigButton->setVisible(true);
 }

@@ -19,6 +19,7 @@
 #include "OBSApp.hpp"
 #include "OBSBasicSourceSelect.hpp"
 
+#include <utility/AudioOnlyMode.hpp>
 #include <utility/ResizeSignaler.hpp>
 #include <utility/ThumbnailManager.hpp>
 #include <utility/ThumbnailView.hpp>
@@ -421,7 +422,8 @@ void OBSBasicSourceSelect::updateExistingSources(int limit)
 					     return false;
 				     }
 
-				     return true;
+				     uint32_t caps = obs_source_get_output_flags(source);
+				     return AudioOnlySourceTypeAllowed(id, caps);
 			     }
 
 			     if (selectedTypeId.compare(sourceTypeId) == 0) {
@@ -506,6 +508,10 @@ void OBSBasicSourceSelect::rebuildSourceTypeList()
 		uint32_t caps = obs_get_source_output_flags(type);
 
 		if ((caps & OBS_SOURCE_CAP_DISABLED) != 0) {
+			continue;
+		}
+
+		if (!AudioOnlySourceTypeAllowed(unversioned_type, caps)) {
 			continue;
 		}
 

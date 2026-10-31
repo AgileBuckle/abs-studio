@@ -16,8 +16,10 @@ OBS Studio <https://obsproject.com>
 What is OBS Studio?
 -------------------
 
-OBS Studio is software designed for capturing, compositing, encoding,
-recording, and streaming video content, efficiently.
+OBS Studio (this fork) is software designed for capturing, filtering,
+encoding, recording, and streaming **audio** content. Video capture,
+preview, and video encoder UI are disabled; the underlying video
+pipeline remains so outputs continue to work.
 
 It's distributed under the GNU General Public License v2 (or any later
 version) - see the accompanying COPYING file for more details.

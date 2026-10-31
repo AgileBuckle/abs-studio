@@ -2,12 +2,14 @@
 
 #include <OBSApp.hpp>
 
+#include <utility/AudioOnlyMode.hpp>
+
 #include <QMessageBox>
 #include <QPushButton>
 
 #include "moc_UIValidation.cpp"
 
-static int CountVideoSources()
+static int CountRelevantSources()
 {
 	int count = 0;
 	auto countSources = [](void *param, obs_source_t *source) {
@@ -16,7 +18,12 @@ static int CountVideoSources()
 		}
 
 		uint32_t flags = obs_source_get_output_flags(source);
-		if ((flags & OBS_SOURCE_VIDEO) != 0) {
+
+		if (kAudioOnlyApp) {
+			if ((flags & OBS_SOURCE_AUDIO) != 0) {
+				(*static_cast<int *>(param))++;
+			}
+		} else if ((flags & OBS_SOURCE_VIDEO) != 0) {
 			(*static_cast<int *>(param))++;
 		}
 
@@ -30,7 +37,7 @@ static int CountVideoSources()
 bool UIValidation::NoSourcesConfirmation(QWidget *parent)
 {
 	// There are sources, don't need confirmation
-	if (CountVideoSources() != 0) {
+	if (CountRelevantSources() != 0) {
 		return true;
 	}
 

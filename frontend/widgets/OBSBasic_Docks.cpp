@@ -19,6 +19,8 @@
 
 #include "OBSBasic.hpp"
 
+#include <utility/AudioOnlyMode.hpp>
+
 #include <qt-wrappers.hpp>
 
 void setupDockAction(QDockWidget *dock)
@@ -85,18 +87,31 @@ void OBSBasic::on_resetDocks_triggered(bool force)
 	ui->scenesDock->setVisible(true);
 	ui->sourcesDock->setVisible(true);
 	ui->mixerDock->setVisible(true);
-	ui->transitionsDock->setVisible(true);
+	ui->transitionsDock->setVisible(!kAudioOnlyApp);
 	controlsDock->setVisible(true);
 	statsDock->setVisible(false);
 	statsDock->setFloating(true);
 
-	QList<QDockWidget *> bottomDocks{ui->mixerDock, ui->transitionsDock, controlsDock};
+	if (kAudioOnlyApp) {
+		ui->canvasEditor->setVisible(false);
 
-	resizeDocks(bottomDocks, {bottomDocksHeight, bottomDocksHeight, bottomDocksHeight}, Qt::Vertical);
-	resizeDocks(bottomDocks, {cx * 45 / 100, cx * 14 / 100, cx * 16 / 100}, Qt::Horizontal);
+		QList<QDockWidget *> bottomDocks{controlsDock};
+		resizeDocks(bottomDocks, {bottomDocksHeight}, Qt::Vertical);
+		resizeDocks(bottomDocks, {cx * 30 / 100}, Qt::Horizontal);
 
-	int sideDockWidth = std::min(width() * 30 / 100, 280);
-	resizeDocks({ui->scenesDock, ui->sourcesDock}, {sideDockWidth, sideDockWidth}, Qt::Horizontal);
+		int sideDockWidth = std::min(width() * 30 / 100, 280);
+		resizeDocks({ui->scenesDock, ui->sourcesDock}, {sideDockWidth, sideDockWidth}, Qt::Horizontal);
+		int mixerWidth = std::min(width() * 45 / 100, 480);
+		resizeDocks({ui->mixerDock}, {mixerWidth}, Qt::Horizontal);
+	} else {
+		QList<QDockWidget *> bottomDocks{ui->mixerDock, ui->transitionsDock, controlsDock};
+
+		resizeDocks(bottomDocks, {bottomDocksHeight, bottomDocksHeight, bottomDocksHeight}, Qt::Vertical);
+		resizeDocks(bottomDocks, {cx * 45 / 100, cx * 14 / 100, cx * 16 / 100}, Qt::Horizontal);
+
+		int sideDockWidth = std::min(width() * 30 / 100, 280);
+		resizeDocks({ui->scenesDock, ui->sourcesDock}, {sideDockWidth, sideDockWidth}, Qt::Horizontal);
+	}
 
 	activateWindow();
 }
